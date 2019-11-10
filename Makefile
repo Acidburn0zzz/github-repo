@@ -12,10 +12,10 @@ VERSION_PROD  := $(shell git describe --exact-match --abbrev=0 2>/dev/null)
 VERSION_DEV   := $(shell git describe | sed "s/-/+/" | sed "s/-/./")
 VERSION       := $(or $(VERSION_PROD),$(VERSION_DEV))
 
-BINARY_386    := $(OUTDIR)/gr_linux_386
-BINARY_AMD64  := $(OUTDIR)/gr_linux_amd64
+BINARY_I686    := $(OUTDIR)/gr_linux_i686
+BINARY_X86_64  := $(OUTDIR)/gr_linux_x86_64
 BINARY_NATIVE := $(OUTDIR)/gr_$(shell go env GOOS)_$(shell go env GOARCH)
-BINARIES      := $(sort $(BINARY_386) $(BINARY_AMD64) $(BINARY_NATIVE))
+BINARIES      := $(sort $(BINARY_I686) $(BINARY_X86_64) $(BINARY_NATIVE))
 LDFLAGS       := -s -w -X 'main.Version=$(VERSION)' -X 'main.BuildDate=$(BUILDDATE)'
 
 .PHONY: all
@@ -34,9 +34,9 @@ deps:
 $(OUTDIR):
 	mkdir -p $@
 
-$(BINARY_386)   : export GOARCH = 386
-	export GOOS = linux
-$(BINARY_AMD64) : export GOARCH = amd64
+$(BINARY_I686)   : export GOARCH = i686
+export GOOS = linux
+$(BINARY_X86_64) : export GOARCH = x86_64
 	export GOOS = linux
 $(BINARIES) : | deps $(OUTDIR)
 	$(GOBUILD) -ldflags="$(LDFLAGS)" -o $@
